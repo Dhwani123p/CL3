@@ -202,6 +202,97 @@ print("Best Individual:", best)
 print("Fitness:", best.fitness.values)
 if __name__ == "__main__":
 main()
+
+#CI5-------------------------------------------------------------
+
+import numpy as np
+import random
+# Distance matrix
+# Let there are 5 cities (A,B,C,D,E)
+dist = np.array([
+    [0, 2, 2, 5, 7],
+    [2, 0, 4, 8, 2],
+    [2, 4, 0, 1, 3],
+    [5, 8, 1, 0, 2],
+    [7, 2, 3, 2, 0]
+])
+# No. of cities
+n = len(dist)
+# Initialize pheromone matrix
+pheromone = np.ones((n, n))
+# Parameters
+alpha = 1  # phermon importance
+beta = 1  # distance importance
+evaporation = 0.5  
+Q = 100  # amount of pheromone deposited
+# Calculates total route distance
+def route_length(route):
+    return sum(
+        dist[route[i]][route[i+1]]
+        for i in range(len(route)-1)
+    ) + dist[route[-1]][route[0]]
+# Choose next city
+def choose_next(city, visited):
+    probs = []
+    for j in range(n):
+        if j not in visited:
+            # Pheromone value
+            tau = pheromone[city][j]**alpha
+
+            # Heuristic Value
+            if dist[city][j] != 0:
+                eta = (1 / dist[city][j])**beta
+            else:
+                eta = 0
+
+            probs.append((j, tau*eta))
+
+    # Ignores first value
+    total = sum(p for _, p in probs)
+
+    r = random.random()
+    s = 0
+
+    for j,p in probs:
+        s += p/total
+        if r <= s:
+            return j
+# Ant Colony Optimization function
+def aco(iterations=50, ants=10):
+    best_route = None
+    best_length = float('inf')
+
+    for _ in range(iterations):
+        all_routes = []
+        for _ in range(ants):
+            route = [random.randint(0, n-1)]
+
+            while len(route) < n:
+                next_city = choose_next(route[-1], route)
+                route.append(next_city)
+
+            all_routes.append(route)
+
+            length = route_length(route)
+            
+            if length < best_length:
+                best_length = length
+                best_route = route
+
+        # Evaporation
+        pheromone[:] *= (1-evaporation)
+
+        # Pheromone update
+        for route in all_routes:
+            lenght = route_length(route)
+
+            for i in range(n-1):
+                pheromone[route[i]][route[i+1]] += Q/length
+
+    return best_route, best_length
+route, length = aco()
+print("Best route:", route)
+print("Shortest distance:", length)
 #___________________________________________
 #DC3---------------------------------------------------------
 import random
@@ -245,6 +336,8 @@ reset_servers()
 random_lb(requests)
 reset_servers()
 least_connections(requests)
+
+
 
 #DC5--------------------------------------------------------
 data = [
