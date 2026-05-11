@@ -202,3 +202,75 @@ print("Best Individual:", best)
 print("Fitness:", best.fitness.values)
 if __name__ == "__main__":
 main()
+#___________________________________________
+#DC3---------------------------------------------------------
+import random
+# Simulated servers
+servers = [
+{"name": "Server-1", "connections": 0},
+{"name": "Server-2", "connections": 0},
+{"name": "Server-3", "connections": 0}
+]
+# Round Robin Load Balancing
+def round_robin(requests):
+    print("\nRound Robin Allocation:")
+    n = len(servers)
+    for i, req in enumerate(requests):
+        server = servers[i % n]
+        server["connections"] += 1
+        print(f"Request {req} → {server['name']}")
+# Random Load Balancing
+def random_lb(requests):
+    print("\nRandom Allocation:")
+    for req in requests:
+        server = random.choice(servers)
+        server["connections"] += 1
+        print(f"Request {req} → {server['name']}")
+# Least Connections
+def least_connections(requests):
+    print("\nLeast Connections Allocation:")
+    for req in requests:
+        server = min(servers, key=lambda s: s["connections"])
+        server["connections"] += 1
+        print(f"Request {req} → {server['name']}")
+# Reset server connections
+def reset_servers():
+for s in servers:
+    s["connections"] = 0
+# Simulated client requests
+requests = [f"Req-{i}" for i in range(1, 11)]
+# Run simulations
+round_robin(requests)
+reset_servers()
+random_lb(requests)
+reset_servers()
+least_connections(requests)
+
+#DC5--------------------------------------------------------
+data = [
+("2001", 30), ("2001", 32),
+("2002", 25), ("2002", 28),
+("2003", 35), ("2003", 36),
+("2004", 20), ("2004", 22)
+]
+def mapper(data):
+    return [(year, temp) for year, temp in data]
+from collections import defaultdict
+def shuffle(mapped):
+    d = defaultdict(list)
+    for year, temp in mapped:
+        d[year].append(temp)
+    return d
+def reducer(shuffled):
+    avg_temp = {}
+    for year, temps in shuffled.items():
+        avg_temp[year] = sum(temps) / len(temps)
+    return avg_temp
+mapped = mapper(data)
+shuffled = shuffle(mapped)
+reduced = reducer(shuffled)
+hottest = max(reduced, key=reduced.get)
+coolest = min(reduced, key=reduced.get)
+print("Average:", reduced)
+print("Hottest Year:", hottest)
+print("Coolest Year:", coolest)
