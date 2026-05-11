@@ -93,37 +93,27 @@ population = [create_individual() for _ in range(POP_SIZE)]
 for gen in range(GENERATIONS):
 # Evaluate fitness
 
-In [ ]:
-Generation 1 Best Accuracy = 1.0000
-Generation 2 Best Accuracy = 1.0000
-Generation 3 Best Accuracy = 1.0000
-Generation 4 Best Accuracy = 1.0000
-Generation 5 Best Accuracy = 1.0000
-Best Parameters Found:
-Neurons: 36
-Learning Rate: 0.027780663624047727
-Epochs: 250
-Final Accuracy: 1.0
-scores = [(ind, fitness(ind)) for ind in population]
-scores.sort(key=lambda x: x[1], reverse=True)
-print(f"Generation {gen+1} Best Accuracy = {scores[0][1]:.4f}")
-# Select best 2
-best = [scores[0][0], scores[1][0]]
-# Crossover
-child = [
-random.choice([best[0][0], best[1][0]]),
-random.choice([best[0][1], best[1][1]]),
-random.choice([best[0][2], best[1][2]])
-]
-# Mutation
-child[0] += random.randint(-5, 5)
-child[1] += random.uniform(-0.01, 0.01)
-child[2] += random.randint(-20, 20)
-child[0] = max(5, min(100, child[0]))
-child[1] = max(0.0001, child[1])
-child[2] = max(50, min(500, child[2]))
-# New population
-population = best + [child] + [create_individual() for _ in range(POP_SIZE -
+
+    scores = [(ind, fitness(ind)) for ind in population]
+    scores.sort(key=lambda x: x[1], reverse=True)
+    print(f"Generation {gen+1} Best Accuracy = {scores[0][1]:.4f}")
+    # Select best 2
+    best = [scores[0][0], scores[1][0]]
+    # Crossover
+    child = [
+        random.choice([best[0][0], best[1][0]]),
+        random.choice([best[0][1], best[1][1]]),
+        random.choice([best[0][2], best[1][2]])
+            ]
+    # Mutation
+    child[0] += random.randint(-5, 5)
+    child[1] += random.uniform(-0.01, 0.01)
+    child[2] += random.randint(-20, 20)
+    child[0] = max(5, min(100, child[0]))
+    child[1] = max(0.0001, child[1])
+    child[2] = max(50, min(500, child[2]))
+    # New population
+    population = best + [child] + [create_individual() for _ in range(POP_SIZE -
 best_solution = max(population, key=fitness)
 print("\nBest Parameters Found:")
 print("Neurons:", best_solution[0])
